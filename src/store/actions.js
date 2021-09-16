@@ -7,13 +7,14 @@ async function fetch_get_messages(cname) {
   try {
     const res = await fetch(get_message_path(cname));
     const json = await res.json();
-    return json.messages;
+    return json.messages; // 성공적으로 promise들이 resolve 됐을 때 반환하는 값. await을 통해 호출하면 값을 그대로 받을 수 있다.
   } catch (error) {
     console.log(e);
   }
 }
 
 // Chat.vue에서 메서드로 사용할 것
+// 실제로 store에 부착되는 actions들
 export default {
   // [SET_MESSAGE]({ commit }, message) {
   //   commit(SET_MESSAGE, message);
@@ -26,6 +27,7 @@ export default {
       );
       const data = await res.json();
       commit(GET_CHANNELS, data.channels); //channel state mutation 실행
+      // 재귀 함수 같은 것이 아님. ["GET_CHANNELS" 를 사용하는 이유?]
     } catch (error) {
       console.log(error);
     }
@@ -45,7 +47,7 @@ export default {
         method: "POST",
         body: JSON.stringify({ body: message }),
         headers: {
-          Accept: "application/json",
+          "Accept": "application/json",
           "Content-Type": "application/json"
         }
       });

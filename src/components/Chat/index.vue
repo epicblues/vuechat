@@ -1,25 +1,32 @@
 <template lang="pug">
-.view 
-  .chanel 
-    ul 
+el-container
+  el-aside
+    ul
       li(v-for="channel in channels") 
         router-link(:to="'/channel/' + channel") {{ channel }}
-  .channel-name {{ $route.params.cname }}
-  .messages 
-    ul
-      li(v-for="enteredMessage in messages") {{ enteredMessage.user.name }} : {{ enteredMessage.body }}
-  .form 
-    input(v-model="message", @keyup="send_message")
-    input(value="SEND", type="button", @click="send_message")
+  el-container
+    el-header {{cname}}
+    el-main
+      message-list(:messages="messages")
+    el-footer
+      el-input(type="text" v-model="message" @keyon="send_message")
+      el-button(@click="send_message") SEND
 </template>
+
 
 
 <script>
 import { mapGetters, mapActions } from "vuex";
-import { GET_CHANNELS, SET_MESSAGES } from "../../store/mutation-types";
+import { GET_CHANNELS } from "@/store/mutation-types";
+import MessageList from "@/components/MessageList"
+
+
 
 export default {
   name: "chat",
+  components : {
+    MessageList
+  },
   data() {
     return {
       message: "",
@@ -29,9 +36,8 @@ export default {
   },
   computed: {
     // getterjs와 연결되는 부분 getter.js는 state의 데이터를 어느 정도 가공해서 전달해준다.
-    ...mapGetters(["messages"]),
+    ...mapGetters(["messages","channels"]),
     // 템플릿에서 messages를 data나 computed가 아닌 state에 있는 messages에서 가져온다.
-    ...mapGetters(["channels"]), // 헬퍼 함수 사용
     cname() {
       return this.$route.params.cname;
     },
@@ -48,10 +54,13 @@ export default {
   },
 
   methods: {
-    ...mapActions(["GET_MESSAGES"]), // state와 관련된 action을 이 인스턴스에서사용 가능하게 해주겠다.
-    ...mapActions([GET_CHANNELS]),
-    ...mapActions(["POST_MESSAGES"]), // 헬퍼 함수 사용
+    ...mapActions([
+      "GET_MESSAGES"
+      ,GET_CHANNELS,
+      "POST_MESSAGES"
+    ]), // state와 관련된 action들을 이 인스턴스에서사용 가능하게 해주겠다.
     send_message(e) {
+      console.log(e);
       if (e.keyCode === 13 || e instanceof PointerEvent) {
         // action에서 객체로 인자를 받는 이상 그에 맞는 객체 명과 인자를 줘야 한다. ;
         this.POST_MESSAGES({
@@ -70,34 +79,69 @@ export default {
 </script>
 
 
-<style scoped>
+<style>
 ul {
   list-style-type: none;
   padding: 0;
 }
 
-.view {
-  display: grid;
-  grid-template-columns: 100px 1fr;
-  grid-template-rows: auto 1fr auto;
+.el-header {
+ border-bottom:1px solid black; 
 }
 
-.chanel {
-  grid-row: 1 / span 3;
-  grid-column: 1 / 2;
+.el-header, .el-footer {
+  background-color: #ffffff;
+  color:#333;
+  text-align: center;
+  line-height: 60px;
 }
 
-.channel-name {
-  grid-area: 1 / 2;
+.el-aside {
+  background-color: #4a3a4a;
+  text-align:center;
+  width: 100px!important;
 }
 
-.messages {
-  grid-area: 2 / 2;
-  height: 300px;
-  overflow: scroll;
+.el-aside a {
+  color: #ffffff;
+  text-decoration : none;
+  font-weight: bold;
 }
 
-.form {
-  grid-area: 3 / 2;
+.el-main {
+  background-color:#ffffff;
+  color:#333;
+  text-align:center;
+}
+
+.el-container {
+  height:100vh;
+}
+
+.el-input {
+  width: 50%;
+}
+
+.el-table {
+  width: 100%;
+}
+
+.grid-content {
+  min-height : 25px;
+  padding: 0 6px;
+}
+
+.name {
+  font-weight: bold;
+  font-size: 12px;
+  text-align: center;
+}
+
+.date {
+  font-size : 12px;
+}
+
+.message {
+  font-size: 14px;
 }
 </style>

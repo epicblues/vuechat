@@ -1,0 +1,20 @@
+//- ul
+//-   li(v-for="(enteredMessage) in messages") 
+//-     .message {{ enteredMessage.body }}
+//-     .date {{ enteredMessage.date }}
+//-     .name {{enteredMessage.user.name}}
+
+ul
+  li(v-for="(enteredMessage) in messages")
+    el-row
+      el-col(:span="3")
+        img(src="./assets/avatar.png" width=50)
+      el-col(:span="21")
+        el-row 
+          el-col(:span="3")
+            .grid-content.name {{enteredMessage.user.name}}
+          el-col(:span="21")
+            .grid-content.date {{enteredMessage.date}}
+        el-row 
+          el-col(:span="24")
+            .grid-content.message {{enteredMessage.body}}
